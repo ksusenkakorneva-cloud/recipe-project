@@ -1,5 +1,5 @@
 import pytest
-from recipes import Ingredient, Recipe, DietaryRecipe
+from recipes import Ingredient, Recipe, ShoppingList, DietaryRecipe
 
 
 def test_ingredient_creation():
@@ -75,3 +75,77 @@ def test_recipe_len():
     recipe.add_ingredient(Ingredient("Листы для лазаньи", 250, "г"))
     recipe.add_ingredient(Ingredient("Фарш мясной говяжий", 450, "г"))
     assert len(recipe) == 2
+
+
+
+def test_shopping_list_add_recipe():
+    recipe = Recipe("Лазанья")
+    recipe.add_ingredient(Ingredient("Листы для лазаньи", 250, "г"))
+    shopping_list = ShoppingList()
+    shopping_list.add_recipe(recipe, 2)
+    result = shopping_list.get_list()
+    assert len(result) == 1
+    assert result[0].name == "Листы для лазаньи"
+    assert result[0].quantity == 500.0
+
+
+def test_shopping_list_add_recipe_invalid_portions():
+    recipe = Recipe("Лазанья")
+    shopping_list = ShoppingList()
+    with pytest.raises(ValueError):
+        shopping_list.add_recipe(recipe, 0)
+
+
+def test_shopping_list_remove_recipe():
+    lasagna = Recipe("Лазанья")
+    lasagna.add_ingredient(Ingredient("Листы для лазаньи", 250, "г"))
+    soup = Recipe("Суп")
+    soup.add_ingredient(Ingredient("Картофель", 3, "шт."))
+    shopping_list = ShoppingList()
+    shopping_list.add_recipe(lasagna, 1)
+    shopping_list.add_recipe(soup, 1)
+    shopping_list.remove_recipe("Лазанья")
+    result = shopping_list.get_list()
+    assert len(result) == 1
+    assert result[0].name == "Картофель"
+
+
+def test_shopping_list_get_list_sums_same_ingredients():
+    lasagna = Recipe("Лазанья")
+    lasagna.add_ingredient(Ingredient("Морковь", 1, "шт."))
+    soup = Recipe("Суп")
+    soup.add_ingredient(Ingredient("Морковь", 2, "шт."))
+    shopping_list = ShoppingList()
+    shopping_list.add_recipe(lasagna, 1)
+    shopping_list.add_recipe(soup, 1)
+    result = shopping_list.get_list()
+    assert len(result) == 1
+    assert result[0].name == "Морковь"
+    assert result[0].quantity == 3.0
+
+
+def test_shopping_list_get_list_sorted():
+    recipe = Recipe("Лазанья")
+    recipe.add_ingredient(Ingredient("Сыр пармезан", 120, "г"))
+    recipe.add_ingredient(Ingredient("Мука", 60, "г"))
+    shopping_list = ShoppingList()
+    shopping_list.add_recipe(recipe, 1)
+    result = shopping_list.get_list()
+    assert result[0].name == "Мука"
+    assert result[1].name == "Сыр пармезан"
+
+
+def test_shopping_list_add_operator():
+    first_list = ShoppingList()
+    second_list = ShoppingList()
+    lasagna = Recipe("Лазанья")
+    lasagna.add_ingredient(Ingredient("Мука", 60, "г"))
+    soup = Recipe("Суп")
+    soup.add_ingredient(Ingredient("Картофель", 3, "шт."))
+    first_list.add_recipe(lasagna, 1)
+    second_list.add_recipe(soup, 1)
+    result_list = first_list + second_list
+    result = result_list.get_list()
+    assert len(result) == 2
+    assert len(first_list.get_list()) == 1
+    assert len(second_list.get_list()) == 1
