@@ -134,3 +134,24 @@ class ShoppingList:
         for ingredient, recipe_title in other._items:
             new_shopping_list._items.append((ingredient, recipe_title))
         return new_shopping_list
+    
+
+
+class DietaryRecipe(Recipe):
+    def __init__(self, title, diet_type, ingredients=None):
+        super().__init__(title, ingredients)
+        self.diet_type = diet_type
+
+
+    def scale(self, ratio):
+        scaled_recipe = super().scale(ratio)
+        dietary_recipe = DietaryRecipe(
+            scaled_recipe.title,
+            self.diet_type,
+            scaled_recipe.ingredients
+        )
+        return dietary_recipe
+
+
+    def __str__(self):
+        return f"[{self.diet_type}] {super().__str__()}"
