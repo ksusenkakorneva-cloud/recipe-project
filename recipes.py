@@ -50,7 +50,30 @@ class Recipe:
         self.ingredients.append(
             Ingredient(ingredient.name, ingredient.quantity, ingredient.unit)
         )
+    
 
+    @staticmethod
+    def is_valid_ratio(ratio):
+        if isinstance(ratio, (int, float)) and ratio > 0:
+            return True
+        else:
+            return False
+
+
+    def scale(self, ratio):
+        if not Recipe.is_valid_ratio(ratio):
+            raise ValueError("Коэффициент должен быть положительным")
+        scaled_ingredients = []
+        for ingredient in self.ingredients:
+            scaled_ingredients.append(
+                Ingredient(
+                    ingredient.name,
+                    ingredient.quantity * ratio,
+                    ingredient.unit
+                )
+            )
+        return Recipe(self.title, scaled_ingredients)
+    
 
     def __len__(self):
         return len(self.ingredients)
