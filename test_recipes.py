@@ -149,3 +149,26 @@ def test_shopping_list_add_operator():
     assert len(result) == 2
     assert len(first_list.get_list()) == 1
     assert len(second_list.get_list()) == 1
+
+
+
+def test_dietary_recipe_creation():
+    recipe = DietaryRecipe("Овощная лазанья", "вегетарианская")
+    assert recipe.title == "Овощная лазанья"
+    assert recipe.diet_type == "вегетарианская"
+
+
+def test_dietary_recipe_scale():
+    recipe = DietaryRecipe("Овощная лазанья", "вегетарианская")
+    recipe.add_ingredient(Ingredient("Листы для лазаньи", 250, "г"))
+    scaled_recipe = recipe.scale(2)
+    assert isinstance(scaled_recipe, DietaryRecipe)
+    assert scaled_recipe.title == "Овощная лазанья"
+    assert scaled_recipe.diet_type == "вегетарианская"
+    assert scaled_recipe.ingredients[0].quantity == 500.0
+
+
+def test_dietary_recipe_str():
+    recipe = DietaryRecipe("Овощная лазанья", "вегетарианская")
+    recipe.add_ingredient(Ingredient("Листы для лазаньи", 250, "г"))
+    assert str(recipe).startswith("[вегетарианская] Овощная лазанья")
