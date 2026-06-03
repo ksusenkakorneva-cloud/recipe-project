@@ -30,3 +30,34 @@ class Ingredient:
         if not isinstance(other, Ingredient):
             return False
         return self.name == other.name and self.unit == other.unit
+
+
+
+class Recipe:
+    def __init__(self, title, ingredients=None):
+        self.title = title
+        self.ingredients = []
+        if ingredients is not None:
+            for ingredient in ingredients:
+                self.add_ingredient(ingredient)
+
+
+    def add_ingredient(self, ingredient):
+        for existing_ingredient in self.ingredients:
+            if existing_ingredient == ingredient:
+                existing_ingredient.quantity += ingredient.quantity
+                return
+        self.ingredients.append(
+            Ingredient(ingredient.name, ingredient.quantity, ingredient.unit)
+        )
+
+
+    def __len__(self):
+        return len(self.ingredients)
+    
+
+    def __str__(self):
+        result = self.title + "\n"
+        for ingredient in self.ingredients:
+            result += f"- {ingredient}\n"
+        return result.strip()
